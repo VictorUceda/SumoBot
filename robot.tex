@@ -1,0 +1,117 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\newcommand{\rtg}{\frac{180}{\pi}}
+\title{}
+\author{}
+
+\begin{document}
+
+\section{Conceptos previos: }
+\begin{itemize}
+ \item Partiendo de la base de si los sensores no van a cubrir toda la superficie, entonces: si el robot no es detectado pueden pasar 2 cosas: \\
+ - Se encontrará como mínimo a una distancia calculable.\\
+ - Estará fuera del alcance de los sensores.
+ \item $\frac{180}{\pi}$ es el factor de conversión de grados a radianes.
+\end{itemize}
+Vamos a trabajar con que se encontrará a una distancia calculable.
+
+\subsection{Grados de diferencia entre los infrarrojos}
+
+Suponiendo que el otro robot va a medir 20 cm, definimos la función \[f(x) = \rtg arctg\left(\frac{20}{x}\right)\], donde $x$ es la distancia mínima a la que vamos a querer medir. 
+
+Es decir, si colocamos 12 infrarrojos (equidistantes) vamos a tener cubierta una circunferencia de $R = 34.64cm$ (el robot no podrá estar más cerca de nosotros que eso, porque lo detectaría algún sensor)
+
+\paragraph{Para hallar el número de infrarrojos necesarios:} simplemente definimos 
+\[g(x) = \frac{360}{f(x)} = \frac{2\pi}{arctg\left(\frac{20}{x}\right)}\]
+
+Esta función nos da el número de sensores de infrarrojos necesarios para tener cubierta la circunferencia de $R = x$.
+
+\subsection{Utilizando ultrasonidos también}
+
+Un sensor de ultrasonidos mide en un ángulo de $30$ grados y un infrarrojo en línea recta. Pero antes teníamos que con 12 infrarrojos teníamos controlada la circunferencia de radio $R = 34.64$, esto es como tomar que un sensor de infrarrojos mide en ángulo. Este mismo razonamiento nos sirve para los sensores de ultrasonidos. 
+
+Si definimos la función \[h(x,y)= \frac{360 - y\cdot(30 + f(x))}{f(x)} = \frac{360 - y\cdot(30 + \displaystyle \rtg \cdot arctg\left(\frac{20}{x}\right))}{\displaystyle \rtg \cdot arctg\left(\frac{20}{x}\right)} \]
+
+$x$ es la distancia mínima a la que queremos asegurar que el otro robot no está si no es detectado.
+
+El $360$ es porque queremos cubrir una circunferencia entera. 
+
+$y$ es el número de ultrasonidos que queremos poner, y $y\cdot(30 + f(x))$ son los grados que nos cubren los $y$ sensores ultrasonidos (sus 30 grados + el "ángulo muerto" que no cubren directamente), por lo que nos quedan por cubrir $360 - y\cdot(30 + f(x))$ grados por sensores infrarrojos.
+
+Para 4 sensores ultrasonidos tenemos la función (que no he conseguido pintar... pero si pegas el chorizo en google te lo pinta)
+
+f(x) = (360 - 4(30+(180/pi)arctan(20/x)))/((180/pi)arctan(20/x))
+
+Que representa radio de la circunferencia frente a sensores infrarrojos necesarios (complementarios a los ultrasonidos)
+ 
+
+\subsection{Utilidad}
+
+He hecho un programita de octave/matlab esta en el repo (f.m) en el que le pasa como argumentos radio\_mínimo,radio\_máximo,ultrasonidos\_mínimos,ultrasonidos\_máximos (o si no le pasas nada y ejecutas "f" simplemente tiene unos valores por defecto)
+
+Este programa da una tablita con (distancia que mieden, x infrarrojos, y ultrasonidos)
+
+Con los valores por defecto tenemos:
+
+
+
+\begin{array}{ccc}
+Radio & Infrarrojos  & Ultrasonidos \\
+
+    0.00000 & 0.00000 & 0.00000\\
+    \hline
+       34.64000 & 8.00000 & 2.00000\\
+    \hline
+       42.89000 &10.00000 & 2.00000\\
+    \hline
+       46.94000 &11.00000 & 2.00000\\
+    \hline
+       20.00000 & 3.00000 & 3.00000\\
+    \hline
+       29.93000 & 5.00000 & 3.00000\\
+    \hline
+       34.64000 & 6.00000 & 3.00000\\
+    \hline
+       39.25000 & 7.00000 & 3.00000\\
+    \hline
+       43.79000 & 8.00000 & 3.00000\\
+    \hline
+       48.28000 & 9.00000 & 3.00000\\
+    \hline
+       61.55000 &12.00000 & 3.00000\\
+    \hline
+       65.93000 &13.00000 & 3.00000\\
+    \hline
+       23.83000 & 2.00000 & 4.00000\\
+    \hline
+       29.33000 & 3.00000 & 4.00000\\
+    \hline
+       34.64000 & 4.00000 & 4.00000\\
+    \hline
+       39.82000 & 5.00000 & 4.00000\\
+    \hline
+       44.92000 & 6.00000 & 4.00000\\
+    \hline
+       28.56000 & 1.00000 & 5.00000\\
+    \hline
+       34.64000 & 2.00000 & 5.00000\\
+    \hline
+       46.36000 & 4.00000 & 5.00000\\
+    \hline
+       52.10000 & 5.00000 & 5.00000\\
+    \hline
+       63.43000 & 7.00000 & 5.00000\\
+    \hline
+       41.53000 & 1.00000 & 6.00000\\
+    \hline
+       48.28000 & 2.00000 & 6.00000\\
+    \hline
+       61.55000 & 4.00000 & 6.00000\\
+    \hline
+       68.11000 & 5.00000 & 6.00000\\
+    \hline
+       66.80000 & 2.00000 & 7.00000\\
+    \hline
+    \end{array}
+
+\end{document}
